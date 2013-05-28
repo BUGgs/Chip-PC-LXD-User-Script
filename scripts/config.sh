@@ -681,6 +681,14 @@ LastComPortNum=2' /root/.ICAClient/wfclient.ini"
     then
       echo "Fixing CDMAllowed to off: ${INI__citrix__fixCDMAllowed}"
       eval "sed -i -e 's/CDMAllowed=On/CDMAllowed=Off/g' /root/.ICAClient/appsrv.ini"
+      if [ -e /root/.script_citrix_fixcdmallowed_updated ]
+      then
+      	echo "startsession.sh is already updated."
+      else
+        eval "sed -i -e '7a sed -i -e \"s/CDMAllowed=On/CDMAllowed=Off/g\" /root/.ICAClient/appsrv.ini' /usr/lib/chippc/scripts/startsession.sh"
+      	eval "touch /root/.script_citrix_fixcdmallowed_updated"
+      	echo "startsession.sh is now updated."
+      fi
     fi
 
   else

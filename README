@@ -186,6 +186,7 @@ REQUESTS FOR NEXT RELEASE
 -------------------------
 
 - Add VMWare Ignore SSL cert: we could modify the view-preferences files in the /root/.vmware folder. If you add “view.sllverificationmode = “3” here, the initial request about “connect insecure” will “suppressed”
+- Add search domain in DHCP config - http://superuser.com/questions/110808/how-can-i-add-additional-search-domains-to-the-resolv-conf-created-by-dhclient-i
 - Automated device Shutdown after last connection is ended
 - PN Agent on start menu / Sub folder in menu and desktop
 - Set a screen resolution, but leave user able to change it if he wants
@@ -204,6 +205,7 @@ CHANGELOG
 ----------
 v1.7 : May 28th 2013
 		- Add bugfix for CDMAllowed that need to be off in /root/.ICAClient/appserv.ini
+v1.7 RC2 : April 10th 2013
     	- Enabling FW version checking (to handle xfce vs icewm)
         - Updating FreeRDP package to 1.1.0 beta 1 (Open Kernel needed)
         - Fix: Updating Firefox certificates (need to export manually cert8.db in /certs)
