@@ -1,0 +1,2 @@
+#!/bin/bash
+/usr/bin/xfreerdp --plugin rdpdr --data disk:usbdrive:/media/usbrdp -- $*

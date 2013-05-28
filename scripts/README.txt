@@ -1,0 +1,272 @@
+Config Script for Chip PC ThinX OS v1.5 (November 16th 2012)
+Version validated for ThinX OS 1.1.3, 1.1.4, 2.0.1
+By Romain DUCHENE, rduchene@chippc.com
+
+DESCRIPTION
+-----------
+This script is doing some tweaks and optimizations that aren't already implemented in Xcalibur
+Global.
+The target isn't to bypass Xcalibur, but to address some specific customer requests that Xcalibur 
+or ThinX OS can't do for the moment.
+
+COMPATIBILITY
+-------------
+	- Xtreme LXD 8541 Firmware 2.0.1 b.081303
+	- Plug PC LXP 2310 Firmware 1.1.3 and 1.1.4
+	- Xtreme PC LXN 2321 Firmware 1.1.3 and 1.1.4
+	- Jack PC LXJ 2311 Firmware 1.1.3 and 1.1.4
+
+FEATURES
+--------
+- Enabling Asynchronous USB connection (faster transfer)
+- Enabling DDC in local settings, but leave user able to change it to a another fixed resolution
+- Shedule an automatic Shutdown every day at specific time
+- Shedule an automatic Reboot every day at specific time
+- Splashy image update - New background image (changeable)
+- Fixing /root/NULL issue (out of flash memory)
+- Sync Folder feature ! Generic tool to deploy any file anywhere on 2xxx and 8xxx (all content of /sync folder is push on device)
+- Assign hostname, fixed ip address, gateway, and DNS based on MAC address (and revert to DHCP if needed)
+- Change local GUI theme from the XP like to a cleaner theme (extension to other themes possible)
+- Multi language support for Domain Authenticator login windows: german, french, english, dutch, Norwegian
+- Multi language support for Start Menu: german, french, english, dutch, Norwegian
+- Hide the desktop taskbar
+- Hide the "New X Connection" in Start menu
+- Hide the "New RDP Connection" in Start menu
+- Hide the "New Internet Browser Connection" in Start menu
+- Optimization of Shutdown in Start menu: Shutdown is done instantly (no confirmation panel)
+- Optimization of Reboot in Start menu: Reboot is done instantly (no confirmation panel)
+- Optimization of Log-Off in Start menu: Log-Off is done instantly (no confirmation panel)
+- Hide "Shutdown" in Start menu (already in Xcalibur, but needed because of script optimization)
+- Hide "Reboot" in Start menu (already in Xcalibur, but needed because of script optimization)
+- Hide "Log-Off" in Start menu (already in Xcalibur, but needed because of script optimization)
+- Hide cursor (replaced with transparent cursor)
+- Microsoft Natural Keyboard fix for 2xxx
+- Firefox: Disabling "Open New Windows In New Tab"
+- Firefox: Disabling "Always Show Taskbar"
+- Firefox: disableResumeFromCrash
+- Citrix: Adding USB to Serial support in Citrix Client (for 2 devices: COM1 and COM2)
+- Citrix: Fixing ZLDiskCacheSize (to avoid filling Flash memory)
+- Clock format to 24h
+- autoStart any Connection based on a keyword (Web, RDP, ICA, PNAgent)
+- Updating FreeRDP binaries to Git version September 14th (Open Kernel only) - Dual screen support
+- Updating Firefox binaries to version 15.0 (Open Kernel only)
+- Updating Chrome binaries to version 10.0 (Open Kernel only)
+- Install Firefox r-kiosk extension: https://addons.mozilla.org/en-US/firefox/addon/r-kiosk/
+
+- PNAgent icon cleanup on Desktop during startup
+
+- Push Certificate for ICA
+- Push Certificate for Firefox
+- Push Certificate for FreeRDP
+- Fix time zone issue (daylight save)
+
+
+INSTALLATION
+------------
+requirements:
+	- Xcalibur Global 1.2 installed and running
+	- User Script Plugin for Xcalibur (v.1.00.03 or better)
+	- Licences needed: 
+		- Xcalibur Global Client License
+		- UserScript license (contact your Chip PC Technical Manager to get them)
+	- Open Device Kernel: only for 8XXX and FreeRDP, Firefox, or Chrome update
+
+- Unzip the package in the Xcalibur Global folder, in general: c:\Program Files\Xcalibur Global(1.2) 
+- after unzip, you will get a subfolder "scripts" with all files (including this README.txt) 
+  and some sub-folders
+- edit and modify the config.ini file in folder "scripts" as described in CONFIGURATION area
+- In Xcalibur Global MMC (2 possibilities):
+	- By creating a new policy: 
+		- Install User Script Plugin
+		- Enable "ThinX run once script" and add the script c:\Program Files\Xcalibur Global(1.2)\scripts\launcher.sh
+	- By using the pre-configured policy in the script folder "Device - Config Script Installation.pls"
+		- Import this policy in AD container "System\Xcalibur Policies\TC Policy"
+		- Link the policy to OU/device
+- Script will apply at next reboot
+- Any modification will be applied only at device reboot
+
+CONFIGURATION
+-------------
+[video]
+ddc=1							# 1 to enable DDC on device / 0 to not make any change (by default)
+resolution=						# Not used yet
+color=							# Not used yet
+
+[system]
+shutdownTime=22:35				# HH:MM
+rebootTime=23:45				# HH:MM
+macConfigFile=					# full path of mac config file - example: /xcalibur/deployment/scripts/hosts-config.txt
+userConfigFile=					# Not used yet
+timeZone=Europe/Paris			# Timezone to change to (Need to put the full name, like Europe/London or Europe/Berlin)
+nullFix=1						# 1 to active the /root/NULL fix, 0 to not activate (by default)
+syncFolder=1					# 1 to sync Folder (see Chapter below for explanation)
+fixMSNatural=1					# 1 to activate MS Natural Keyboard fix, 0 to not activate (by default) - 2xxx only
+fixUSBSpeed=1					# 1 to activate Asynchronous USB transfer, instead of Synchronous mode
+dnsSearchDomain=dom1.ad;dom2.ad # list of all DNS domain to search, separated by ; (need to include also the default one)
+
+[gui]
+theme=IceClearlooks				# IceClearlooks or SilverXP (by default) - 8xxx only
+language=french					# english (by default), french or german (in lowercase !)
+hideTaskBar=0					# 1 to hide the Taskbar, 0 to show it (by default)
+hideXConnection=1				# 1 to hide the New X Connection in menu, 0 to show it (by default)
+hideWebConnection=1				# 1 to hide the New Internet Browser Connection in menu, 0 to show it (by default)
+hideRdpConnection=1				# 1 to hide the New RDP Connection in menu, 0 to show it (by default)
+hideShutdown=0					# 1 to hide Shutdown in menu, 0 to show it (by default)
+hideReboot=1					# 1 to hide Reboot in menu, 0 to show it (by default)
+hideLogoff=1					# 1 to hide Logoff in menu, 0 to show it (by default)
+clock24HFormat=1				# 1 to change to 24h format, 0 to keep 12h am/pm (by default)
+autoStartConnection=			# to autostart any connection on the desktop (even ICA from PNAgent)
+								# based on any keyword
+updateSplashy=1					# 1 to update splashy background update, 0 to not update (by default) - 2xxx only
+hideCursor=1					# 1 to hide cursor in local desktop, 0 to keep it (by default)
+
+
+[firefox]
+openNewWindowsInNewTab=0		# 0 to disable Open New Windows In New Tab, 1 to leave it enabled (by default)
+alwaysShowTaskbar=0				# 0 to disable Always Show Taskbar, 1 to leave it enabled (by default)
+disableResumeFromCrash=1		# 1 to disable the Resume From Crash feature, 0 to keep it
+pushCertificate=1				# 1 to push all certificates from sub-folder /certs to Firefox
+kiosk=1							# 1 to install Kiosk Mode on Firefox (r-kiosk extension)
+
+[citrix]
+ZLDiskCacheSize=20971520		# add a cache size limit on ICA Client (by example: 20971520)
+addComPortUSB=1					# 1 to add USB to Serial support in ICA Client (as COM1)
+pushCertificate=1				# 1 to push all certificates from sub-folder /certs to Citrix Client
+cleanPNAIcons=1					# Cleaning any old PNA Icons on local Desktop at every boot
+
+[freerdp]
+pushCertificate=1				# 1 to push all certificates from sub-folder /certs to FreeRDP Client
+
+[iid]
+iidZipFix=1						# 1 to fix iid.conf file (libz.so.1)
+
+[opendevice]
+updateFreeRDP=1					# 1 to install FreeRDP Package update - OPEN DEVICE IS MANDATORY
+updateFirefox=1					# 1 to install Firefox Package update - OPEN DEVICE IS MANDATORY
+updateChrome=1					# 1 to install Chrome Package update - OPEN DEVICE IS MANDATORY
+
+
+MAC FILE CONFIG
+---------------
+
+Configuration of the macConfigFile: it's a regular UNIX text file, with one line for every MAC. 
+All data are separated with a space
+
+format for every line:
+MACADDRESS HOSTNAME IPADDRESS [NETMASK GATEWAY DNS1 DNS2 DOMAINNAME]
+
+MACADDRESS, HOSTNAME and IPADDRESS are mandatory
+if IPADDRESS is "dhcp" so NETMASK GATEWAY DNS1 DNS2 are optionnal, if IPADDRESS is a real IP address, they are mandatory 
+
+example:
+00053509717C host1 192.168.15.10 255.255.255.0 192.168.15.151 4.2.2.2 8.8.8.8 chippc.com
+00053509718C host2 dhcp
+00053509712C host3 dhcp
+
+
+SYNC FOLDER
+-----------
+When using the Sync Folder feature, you can deploy any file in any area of the device, but no binary/executable.
+There is 2 way to deploy files:
+- all content of /sync/2xxx (or /sync/8xxx, depending of the deployed device) will be COPIED recursively at 
+  the root / of the device (so, to deploy a file /etc/xxxx.ini on the device, you will need to put it in
+  /sync/8xxx/etc/xxxx.ini for a 8xxx device, and /sync/2xxx/etc/xxxx.ini for a 2xxx device
+- prepare a file named 2xxx.tar.gz or 8xxx.tar.gz with all the structure you want to deploy 
+  on the device, and it will be automatically decompressed at the root / of the device
+You can use both mecanism at the same time, if you do so, tar.gz will be applied first and 
+then the simple copy will apply. So in case of conflict on the same file, the simple copy 
+will have highest priority.
+
+KNOWN ISSUES
+------------
+- When a language has been already applied, a new language change require a Reset Factory 
+  of the device to apply (not critical)
+
+REQUESTS FOR NEXT RELEASE
+-------------------------
+
+- Add VMWare Ignore SSL cert: we could modify the view-preferences files in the /root/.vmware folder. If you add “view.sllverificationmode = “3” here, the initial request about “connect insecure” will “suppressed”
+- Automated device Shutdown after last connection is ended
+- PN Agent on start menu / Sub folder in menu and desktop
+- Set a screen resolution, but leave user able to change it if he wants
+
+- Screen rotation (1-2 screen, with L-Shape)
+
+- DisplayLink driver (open kernel)
+- Shutdown after idle time (via screensaver)
+- Suspend mode ?  echo mem > /sys/power/state (https://bbs.archlinux.org/viewtopic.php?id=58273)
+- applying some specific configuration based on logged user
+- Change dynamically screen resolution (even for dual screen)
+- Citrix USB redirection refresh at connection startup: http://support.citrix.com/article/CTX120099
+- Keyboard remapping: http://wiki.mandriva.com/fr/Personnaliser_le_clavier#R.C3.A9affecter_les_touches_avec_XKb
+
+CHANGELOG
+----------
+v1.7 : May 28th 2013
+		- Add bugfix for CDMAllowed that need to be off in /root/.ICAClient/appserv.ini
+    	- Enabling FW version checking (to handle xfce vs icewm)
+        - Updating FreeRDP package to 1.1.0 beta 1 (Open Kernel needed)
+        - Fix: Updating Firefox certificates (need to export manually cert8.db in /certs)
+        - Temporary Secmaker NetId fix (libz.so.1)
+        - Force to update to different DNS Search Domain (not the one from DHCP)
+        - Update Remove "New Web Browser Connection" to 2.0.2 compatibility
+        - Update Remove Taskbar to 2.0.2 compatibility
+        - Removed XFCE Beta test (obsolete)
+        - Removed Firefox 15 (obsolete)
+        - Some code tuning
+v1.6 : January 16th 2013
+		- Add keymap fix (Euro sign on ALTGR 6) for rdesktop
+		- Beta test: XFCE Windows Manager (open device only)
+v1.5 : November 16th 2012
+		- Adding Asynchronous USB transfer mode
+		- Adding Norwegian translation
+v1.4 : November 8th 2012
+		- Adding FreeRDP translation - fix
+		- Adding Dutch translation
+		- LXN support
+		- Splashy update for 2xxx - New background image (changeable)
+		- Checks for 8xxx only on Open Kernel features
+		- Fixing /root/NULL issue
+		- Sync Folder feature ! Generic tool to deploy any file anywhere on 2xxx and 8xxx
+		- Hide cursor (replaced with transparent cursor)
+		- Microsoft Natural Keyboard fix for 2xxx
+v1.3 : September 18th 2012
+		- Updating FreeRDP binaries to Git version September 14th (Open Kernel only)
+		- Updating Firefox binaries to version 15.0 (Open Kernel only)
+		- Updating Chrome binaries to version 10.0 (Open Kernel only)
+		- Install Firefox r-kiosk extension: https://addons.mozilla.org/en-US/firefox/addon/r-kiosk/
+
+		- PNAgent icon cleanup on Desktop during startup
+
+		- Push Certificate for ICA
+		- Push Certificate for Firefox
+		- Push Certificate for FreeRDP
+		- Fix time zone issue (daylight save)
+
+v1.2 : September 3th 2012
+		- Fixing launcher.sh (error in file format)
+		- Adding a check for Firefox existence before executing Firefox settings
+		- Adding a check for ICA Client existence before executing ICA settings
+		- Adding 2 USB to Serial support in Citrix as COM1 and COM2
+		- Modifying german translation for Settings
+		- Adding 2 translated item in start menu: My LBT and Applications
+		- Issue with MAC file: file was needed to be in Unix format, not in DOS/Windows (if not, file is parse incorrectly)
+		  Now, it's fixed
+v1.1 :  July 31th 2012
+		- clock24HFormat : change the local clock to 24h format (no am/pm)
+		- autoStartConnection : start automatically any RDP/ICA/WEB connection on the desktop
+		  based on a keyword
+		- Citrix - ZLDiskCacheSize : choose the size of ZLDiskCacheSize in Citrix Client
+		- Citrix - addComPortUSB : adding USB to Serial support in Citrix Client as COM1
+		- Firefox - disableResumeFromCrash : Disable Resume From Crash feature in Firefox
+		- Modification of launcher.sh to include directly a first script launch and a reboot 
+          after installation apply everything directly
+        - fix: no need for manual reboot after installation
+        
+v1.0 : 	July 18th 2012
+		- Initial release
+		- DDC, shutdowntime, reboottime, macconfigfile, theme, language (including login BMP), 
+		  hidetaskbar, hideXconnection, hideRDPconnection, hideWebConnection,
+		  hideShutdown, hideReboot, hideLogoff, Firefox: disable Open New Window In New Tab,
+		- Firefox: Disable Always Show Taskbar
+		- Supported OS: ThinX OS 2.0.1
