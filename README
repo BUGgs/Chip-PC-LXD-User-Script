@@ -1,5 +1,5 @@
-Config Script for Chip PC ThinX OS v1.5 (November 16th 2012)
-Version validated for ThinX OS 1.1.3, 1.1.4, 2.0.1
+Config Script for Chip PC ThinX OS v1.7 (May 28th 2013)
+Version validated for ThinX OS 1.1.3, 1.1.4, 2.0.1, 2.0.2
 By Romain DUCHENE, rduchene@chippc.com
 
 DESCRIPTION
@@ -11,7 +11,7 @@ or ThinX OS can't do for the moment.
 
 COMPATIBILITY
 -------------
-	- Xtreme LXD 8541 Firmware 2.0.1 b.081303
+	- Xtreme LXD 8541 Firmware 2.0.1 and 2.0.2
 	- Plug PC LXP 2310 Firmware 1.1.3 and 1.1.4
 	- Xtreme PC LXN 2321 Firmware 1.1.3 and 1.1.4
 	- Jack PC LXJ 2311 Firmware 1.1.3 and 1.1.4
