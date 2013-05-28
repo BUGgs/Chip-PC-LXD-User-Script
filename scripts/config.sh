@@ -833,30 +833,6 @@ LastComPortNum=2' /root/.ICAClient/wfclient.ini"
       fi
     fi
 
-    # Updating XFCE (Beta test)
-    if [ ${INI__opendevice__updateToXfce} = "1" -a ${DEVICE_MODEL} = "8xxx" -a ${FIRMWARE_VERSION} = "2.0.1" ]
-    then
-      echo "Updating Windows Manager to XFCE : ${INI__opendevice__updateToXfce}"
-      if [ -e /etc/xdg/xfce4/xinitrc ]
-      then
-      	eval "dpkg -i --force-all ${SCRIPTPATH}/data/xfce/*.deb"
-		#eval "dpkg -r --force-depends thunar thunar-data"
-		eval "tar zxvf ${SCRIPTPATH}/data/xfce/xfce-root-config.tgz -C /root/"
-		eval "tar zxvf ${SCRIPTPATH}/data/xfce/xfce-root-local.tgz -C /root/"
-		# TODO : xfce-etc.tgz ================================================================
-		eval "tar zxvf ${SCRIPTPATH}/data/xfce/xfce-etc-xdg.tgz -C /etc/"
-		eval "sed -i -e '/xscreensaver_start/a \
-\/root\/.config\/load_pcmanfm.sh &' /root/.ICAClient/wfclient.ini"
-		eval "eval \"sed -i -e 's/icewm-session/xfce4-session/g' /root/.xsession\""
-		eval "mkdir /etc/xdg/xfce4/kiosk"
-		eval "echo \"[xfce4-panel]\" > /etc/xdg/xfce4/kiosk/kioskrc"
-		eval "echo \"CustomizePanel=\" >> /etc/xdg/xfce4/kiosk/kioskrc"
-      	
-      else
-      	echo "Windows Manager XFCE is already installed !"
-      fi
-    fi
-
 else
   echo "Configuration file not found !"
 fi
