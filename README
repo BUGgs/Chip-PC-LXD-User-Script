@@ -206,16 +206,16 @@ CHANGELOG
 v1.7 : May 28th 2013
 		- Add bugfix for CDMAllowed that need to be off in /root/.ICAClient/appserv.ini
 v1.7 RC2 : April 10th 2013
-    	- Enabling FW version checking (to handle xfce vs icewm)
-        - Updating FreeRDP package to 1.1.0 beta 1 (Open Kernel needed)
-        - Fix: Updating Firefox certificates (need to export manually cert8.db in /certs)
-        - Temporary Secmaker NetId fix (libz.so.1)
-        - Force to update to different DNS Search Domain (not the one from DHCP)
-        - Update Remove "New Web Browser Connection" to 2.0.2 compatibility
-        - Update Remove Taskbar to 2.0.2 compatibility
-        - Removed XFCE Beta test (obsolete)
-        - Removed Firefox 15 (obsolete)
-        - Some code tuning
+		- Enabling FW version checking (to handle xfce vs icewm)
+		- Updating FreeRDP package to 1.1.0 beta 1 (Open Kernel needed)
+		- Fix: Updating Firefox certificates (need to export manually cert8.db in /certs)
+		- Temporary Secmaker NetId fix (libz.so.1)
+		- Force to update to different DNS Search Domain (not the one from DHCP)
+		- Update Remove "New Web Browser Connection" to 2.0.2 compatibility
+		- Update Remove Taskbar to 2.0.2 compatibility
+		- Removed XFCE Beta test (obsolete)
+		- Removed Firefox 15 (obsolete)
+		- Some code tuning
 v1.6 : January 16th 2013
 		- Add keymap fix (Euro sign on ALTGR 6) for rdesktop
 		- Beta test: XFCE Windows Manager (open device only)
