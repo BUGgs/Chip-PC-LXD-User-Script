@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Config Script for Chip PC ThinX OS v1.7
-# Version validated for ThinX OS v2.0.1, 2.0.2 and 1.1.4
+# Version validated for ThinX OS v2.0.1, 2.0.2, 2.0.3 and 1.1.4
 # By Romain DUCHENE, rduchene@chippc.com
 
 # Configurable variable
@@ -24,29 +24,36 @@ then
 
 # Checking Device model
 DEVICE_MODEL=
+FIRMWARE_VERSION=
+
 if grep -a "8" ${MODEL_FILE} > /dev/null
 then
 	DEVICE_MODEL="8xxx"
+	FIRMWARE_VERSION=201
 fi
 if grep -a "2" ${MODEL_FILE} > /dev/null
 then
 	DEVICE_MODEL="2xxx"
+	FIRMWARE_VERSION=114
 fi
 echo "Device model: ${DEVICE_MODEL}"
 
 # Checking Firmware version
-FIRMWARE_VERSION=
 if diff ${SCRIPTPATH}/data/fwversion/softverssion-1.1.4 ${VERSION_FILE} >/dev/null
 then
-	FIRMWARE_VERSION="1.1.4"
+	FIRMWARE_VERSION=114
 fi
 if diff ${SCRIPTPATH}/data/fwversion/softverssion-2.0.1 ${VERSION_FILE} >/dev/null
 then
-	FIRMWARE_VERSION="2.0.1"
+	FIRMWARE_VERSION=201
 fi
 if diff ${SCRIPTPATH}/data/fwversion/softverssion-2.0.2 ${VERSION_FILE} >/dev/null
 then
-	FIRMWARE_VERSION="2.0.2"
+	FIRMWARE_VERSION=202
+fi
+if diff ${SCRIPTPATH}/data/fwversion/softverssion-2.0.3 ${VERSION_FILE} >/dev/null
+then
+	FIRMWARE_VERSION=203
 fi
 echo "Firmware version: ${FIRMWARE_VERSION}"
 
@@ -269,7 +276,7 @@ MOUNTOPTIONS=\"async,noexec,nodev,noatime,nodiratime\"' /etc/usbmount/usbmount.c
 # ############################################
 
 # Theme selection (format: SilverXP, IceClearlooks)
-  if [[ ( $INI__gui__theme && $DEVICE_MODEL = "8xxx" && $FIRMWARE_VERSION = "2.0.1" ) ]]
+  if [[ ( $INI__gui__theme && $DEVICE_MODEL = "8xxx" && $FIRMWARE_VERSION -eq "201" ) ]]
   then
     case ${INI__gui__theme} in
       "IceClearlooks" ) THEME="IceClearlooks" ;;
@@ -280,7 +287,7 @@ MOUNTOPTIONS=\"async,noexec,nodev,noatime,nodiratime\"' /etc/usbmount/usbmount.c
   fi
 
 # Language in menu (format: french, german, english)
-  if [[ ( $INI__gui__language && ( $FIRMWARE_VERSION = "2.0.1" || $FIRMWARE_VERSION = "1.1.4" )) ]]
+  if [[ ( $INI__gui__language && ( $FIRMWARE_VERSION -eq "201" || $FIRMWARE_VERSION -eq "114" )) ]]
   then
     case ${INI__gui__language} in
       "french" )
@@ -406,7 +413,7 @@ MOUNTOPTIONS=\"async,noexec,nodev,noatime,nodiratime\"' /etc/usbmount/usbmount.c
   fi
 
 # Hide Taskbar for 2.0.1
-  if [[ ( $INI__gui__hideTaskBar = "1" && $FIRMWARE_VERSION = "2.0.1" ) ]]
+  if [[ ( $INI__gui__hideTaskBar = "1" && $FIRMWARE_VERSION -eq "201" ) ]]
   then
     echo "Hidding taskbar for 2.0.1"
     eval "sed -i -e 's/^# ShowTaskBar=1/ShowTaskBar=0/g' /root/.icewm/preferences"
@@ -415,8 +422,8 @@ MOUNTOPTIONS=\"async,noexec,nodev,noatime,nodiratime\"' /etc/usbmount/usbmount.c
     eval "sed -i -e 's/^ShowTaskBar=0/# ShowTaskBar=1/g' /root/.icewm/preferences"
   fi
 
-# Hide Taskbar for 2.0.2
-  if [[ ( $INI__gui__hideTaskBar = "1" && $FIRMWARE_VERSION = "2.0.2" ) ]]
+# Hide Taskbar for 2.0.2 or higher (XFCE based)
+  if [[ ( $INI__gui__hideTaskBar = "1" && $FIRMWARE_VERSION -ge "202" ) ]]
   then
     echo "Hidding taskbar for 2.0.2"
     if [ -e /root/.script_hide_taskbar ] ;
@@ -444,7 +451,7 @@ MOUNTOPTIONS=\"async,noexec,nodev,noatime,nodiratime\"' /etc/usbmount/usbmount.c
   fi
 
 # Hide X Connection
-  if [ ${INI__gui__hideXConnection} = "1" -a ${FIRMWARE_VERSION} = "2.0.1" ]
+  if [ ${INI__gui__hideXConnection} = "1" -a ${FIRMWARE_VERSION} -eq "201" ]
   then
     echo "Hidding X Connection"
     eval "sed -i -e 's/ prog \"$TXT_NEW_X_CONNECTION\"/#prog \"$TXT_NEW_X_CONNECTION\"/g' /root/.icewm/menu"
@@ -454,7 +461,7 @@ MOUNTOPTIONS=\"async,noexec,nodev,noatime,nodiratime\"' /etc/usbmount/usbmount.c
 
 # Hide Web Connection
 # For 2.0.1
-  if [ ${INI__gui__hideWebConnection} = "1" -a ${FIRMWARE_VERSION} = "2.0.1" ]
+  if [ ${INI__gui__hideWebConnection} = "1" -a ${FIRMWARE_VERSION} -eq "201" ]
   then
     echo "Hidding Web Connection"
     eval "sed -i -e 's/ prog \"$TXT_NEW_WEB_CONNECTION\"/#prog \"$TXT_NEW_WEB_CONNECTION\"/g' /root/.icewm/menu"
@@ -462,15 +469,15 @@ MOUNTOPTIONS=\"async,noexec,nodev,noatime,nodiratime\"' /etc/usbmount/usbmount.c
     eval "sed -i -e 's/#prog \"$TXT_NEW_WEB_CONNECTION\"/ prog \"$TXT_NEW_WEB_CONNECTION\"/g' /root/.icewm/menu"
   fi
 
-# For 2.0.2
-  if [ ${INI__gui__hideWebConnection} = "1" -a ${FIRMWARE_VERSION} = "2.0.2" ]
+# For 2.0.2 or higher (XFCE based)
+  if [ ${INI__gui__hideWebConnection} = "1" -a ${FIRMWARE_VERSION} -ge "202" ]
   then
     echo "Hidding Web Connection"
     eval "rm -f /usr/share/applications/xffox.desktop"
   fi
 
 # Hide RDP Connection
-  if [ ${INI__gui__hideRdpConnection} = "1" -a ${FIRMWARE_VERSION} = "2.0.1" ]
+  if [ ${INI__gui__hideRdpConnection} = "1" -a ${FIRMWARE_VERSION} -eq "201" ]
   then
     echo "Hidding RDP Connection"
     eval "sed -i -e 's/ prog \"$TXT_NEW_RDP_CONNECTION\"/#prog \"$TXT_NEW_RDP_CONNECTION\"/g' /root/.icewm/menu"
@@ -479,7 +486,7 @@ MOUNTOPTIONS=\"async,noexec,nodev,noatime,nodiratime\"' /etc/usbmount/usbmount.c
   fi
 
 # Hide Shutdown
-  if [ ${INI__gui__hideShutdown} = "1" -a ${FIRMWARE_VERSION} = "2.0.1" ]
+  if [ ${INI__gui__hideShutdown} = "1" -a ${FIRMWARE_VERSION} -eq "201" ]
   then
     echo "Hidding Shutdown"
     eval "sed -i -e 's/ prog \"$TXT_SHUTDOWN\"/#prog \"$TXT_SHUTDOWN\"/g' /root/.icewm/menu"
@@ -488,7 +495,7 @@ MOUNTOPTIONS=\"async,noexec,nodev,noatime,nodiratime\"' /etc/usbmount/usbmount.c
   fi
 
 # Hide Reboot
-  if [ ${INI__gui__hideReboot} = "1" -a ${FIRMWARE_VERSION} = "2.0.1" ]
+  if [ ${INI__gui__hideReboot} = "1" -a ${FIRMWARE_VERSION} -eq "201" ]
   then
     echo "Hidding Reboot"
     eval "sed -i -e 's/ prog \"$TXT_REBOOT\"/#prog \"$TXT_REBOOT\"/g' /root/.icewm/menu"
@@ -497,7 +504,7 @@ MOUNTOPTIONS=\"async,noexec,nodev,noatime,nodiratime\"' /etc/usbmount/usbmount.c
   fi
 
 # Hide Log-Off
-  if [ ${INI__gui__hideLogoff} = "1" -a ${FIRMWARE_VERSION} = "2.0.1" ]
+  if [ ${INI__gui__hideLogoff} = "1" -a ${FIRMWARE_VERSION} -eq "201" ]
   then
     echo "Hidding Log-Off"
     eval "sed -i -e 's/ prog \"$TXT_LOGOFF\"/#prog \"$TXT_LOGOFF\"/g' /root/.icewm/menu"
@@ -506,7 +513,7 @@ MOUNTOPTIONS=\"async,noexec,nodev,noatime,nodiratime\"' /etc/usbmount/usbmount.c
   fi
 
 # Hide Log-Off
-  if [ ${INI__gui__hideLogoff} = "1" -a ${FIRMWARE_VERSION} = "2.0.1" ]
+  if [ ${INI__gui__hideLogoff} = "1" -a ${FIRMWARE_VERSION} -eq "201" ]
   then
     echo "Hidding Log-Off"
     eval "sed -i -e 's/ prog \"$TXT_LOGOFF\"/#prog \"$TXT_LOGOFF\"/g' /root/.icewm/menu"
@@ -515,7 +522,7 @@ MOUNTOPTIONS=\"async,noexec,nodev,noatime,nodiratime\"' /etc/usbmount/usbmount.c
   fi
 
 # Modifying Clock Format
-  if [ ${INI__gui__clock24HFormat} = "1" -a ${FIRMWARE_VERSION} = "2.0.1" ]
+  if [ ${INI__gui__clock24HFormat} = "1" -a ${FIRMWARE_VERSION} -eq "201" ]
   then
     echo "Clock Format: 24H"
     eval "sed -i -e 's/^# TimeFormat=\"%X\"/TimeFormat=\"%H:%M\"/g' /root/.icewm/preferences"
