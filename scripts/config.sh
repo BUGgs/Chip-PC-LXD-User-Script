@@ -262,12 +262,16 @@ MOUNTOPTIONS=\"async,noexec,nodev,noatime,nodiratime\"' /etc/usbmount/usbmount.c
     fi
   fi
 
-# Modifying DNS search domain (at every boot, because DHCP will replace file every time)
+# Modifying DNS search domain (changing DHCP client config file to append search domain)
   if [ ${INI__system__dnsSearchDomain} != "" ]
   then
     DNS_SEARCH_DOMAIN=`echo ${INI__system__dnsSearchDomain} | sed -r 's/;/ /g'`
     echo "Changing DNS Search Domain: ${DNS_SEARCH_DOMAIN}"
-    eval "sed -i -e 's/search/search ${DNS_SEARCH_DOMAIN}/g' /etc/resolv.conf"
+#    eval "sed -i -e 's/search/search ${DNS_SEARCH_DOMAIN}/g' /etc/resolv.conf"
+    DNS_SEARCH_DOMAIN_DHCP=`echo ${INI__system__dnsSearchDomain} | sed -r 's/;/", "/g'`
+    DNS_SEARCH_DOMAIN_DHCP='"'${DNS_SEARCH_DOMAIN_DHCP}'"'
+    echo "DHCP Search: ${DNS_SEARCH_DOMAIN_DHCP}";
+    echo "append domain-search "${DNS_SEARCH_DOMAIN_DHCP}";">>/etc/dhcp3/dhclient.conf
     echo "Updating DNS Search Domain: ok"
   fi
 
