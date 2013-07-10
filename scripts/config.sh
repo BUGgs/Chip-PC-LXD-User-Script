@@ -844,6 +844,28 @@ LastComPortNum=2' /root/.ICAClient/wfclient.ini"
       fi
     fi
 
+# Adding automatic Keyboard detection tool to ICA Client
+  if [ ${INI__opendevice__IcaAutoKeyboard} = "1" ]
+  then
+    echo "ICA Automatic Keyboard: ${INI__opendevice__IcaAutoKeyboard}"
+    if [ -e /root/.script_ica_auto_keyboard_done ]
+    then
+      echo "Patch already done !"
+    else
+      # Copying files
+      eval "cp ${SCRIPTPATH}/data/xkb-switch/libxkbswitch.so /usr/local/lib/"
+      eval "cp ${SCRIPTPATH}/data/xkb-switch/xkb-switch.bin /usr/local/bin/"
+      eval "cp ${SCRIPTPATH}/data/xkb-switch/ica_keyboard_switch.sh /usr/lib/chippc/scripts/"
+      eval "chmod +x /usr/lib/chippc/scripts/ica_keyboard_switch.sh"
+      eval "chmod +x /usr/local/bin/xkb-switch"
+      # Modifying startsession.sh
+      eval "sed -i -e '/xdotool/a \
+bash /usr/lib/chippc/scripts/ica_keyboard_switch.sh' /usr/lib/chippc/scripts/startsession.sh"
+   	  eval "touch /root/.script_ica_auto_keyboard_done"
+      echo "Patch done."
+    fi
+  fi
+
 else
   echo "Configuration file not found !"
 fi
