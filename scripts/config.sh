@@ -855,6 +855,7 @@ LastComPortNum=2' /root/.ICAClient/wfclient.ini"
       # Copying files
       eval "cp ${SCRIPTPATH}/data/xkb-switch/libxkbswitch.so /usr/local/lib/"
       eval "cp ${SCRIPTPATH}/data/xkb-switch/xkb-switch.bin /usr/local/bin/"
+      eval "mv /usr/local/bin/xkb-switch.bin /usr/local/bin/xkb-switch"
       eval "cp ${SCRIPTPATH}/data/xkb-switch/ica_keyboard_switch.sh /usr/lib/chippc/scripts/"
       eval "chmod +x /usr/lib/chippc/scripts/ica_keyboard_switch.sh"
       eval "chmod +x /usr/local/bin/xkb-switch"
