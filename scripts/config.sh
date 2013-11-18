@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Config Script for Chip PC ThinX OS v1.7
+# Config Script for Chip PC ThinX OS v1.8
 # Version validated for ThinX OS v2.0.1, 2.0.2, 2.0.3 and 1.1.4
 # By Romain DUCHENE, rduchene@chippc.com
 
@@ -702,7 +702,21 @@ LastComPortNum=2' /root/.ICAClient/wfclient.ini"
       fi
     fi
 
-  else
+# Applying a custom wfclient.ini
+    if [ ${INI__citrix__customWfclientIni} ]
+    then
+      echo "Pushing SSL Certificates to Citrix Client: ${INI__citrix__customWfclientIni}"
+      if [ -e /root/.script_citrix_custom_wfclient_ini ]
+      then
+        echo "Custom wfclient.ini is already updated."
+      else
+        eval "cp -f ${SCRIPTPATH}/data/wfclient.ini /root/.ICAClient/"
+        eval "touch /root/.script_citrix_custom_wfclient_ini"
+        echo "Custom wfclient.ini has been updated !"
+      fi
+    fi
+ 
+   else
     echo "ICA Client not installed"
   fi
 
