@@ -206,6 +206,8 @@ REQUESTS FOR NEXT RELEASE
 
 CHANGELOG
 ----------
+v1.9 : December 6th 2013
+		- Updating autostart feature with a background watchdog (more compatible with PNAgent shortcuts)
 v1.8 : November 18th 2013
 		- New feature: customer wfclient.ini to be pushed (from /data folder)
 		- Testing (to be removed): ICA Automatic Keyboard Detection (fixed in new ICA Client, it will be removed in next release)
