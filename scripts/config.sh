@@ -539,15 +539,7 @@ MOUNTOPTIONS=\"async,noexec,nodev,noatime,nodiratime\"' /etc/usbmount/usbmount.c
   if [ ${INI__gui__autoStartConnection} ]
   then
     echo "Autostarting Connection the include keyword: ${INI__gui__autoStartConnection}"
-    for i in /root/Desktop/*${INI__gui__autoStartConnection}* ;
-    do
-      if [ -f "$i" ]
-      then
-        CONNECTION=`cat "$i" | grep Exec | sed 's/Exec=//' | sed 's/\%f//' | sed '1!d'`
-        echo "Connection found to autostart : $i = $CONNECTION"
-        eval "${CONNECTION} &";
-      fi;
-    done;
+    eval "bash ${SCRIPTPATH}/lib/auto-connection-monitor.sh ${INI__gui__autoStartConnection} &"
   fi
 
 # Hidding Cursor feature / TODO : Test with 2.0.2
