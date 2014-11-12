@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Config Script for Chip PC ThinX OS v1.8
+# Config Script for Chip PC ThinX OS v1.10
 # Version validated for ThinX OS v2.0.1, 2.0.2, 2.0.3 and 1.1.4
 # By Romain DUCHENE, rduchene@chippc.com
 
@@ -263,7 +263,7 @@ MOUNTOPTIONS=\"async,noexec,nodev,noatime,nodiratime\"' /etc/usbmount/usbmount.c
   fi
 
 # Modifying DNS search domain (changing DHCP client config file to append search domain)
-  if [ ${INI__system__dnsSearchDomain} != "" ]
+  if [[ ("$INI__system__dnsSearchDomain" -ne "") ]]
   then
     DNS_SEARCH_DOMAIN=`echo ${INI__system__dnsSearchDomain} | sed -r 's/;/ /g'`
     echo "Changing DNS Search Domain: ${DNS_SEARCH_DOMAIN}"
@@ -427,7 +427,7 @@ MOUNTOPTIONS=\"async,noexec,nodev,noatime,nodiratime\"' /etc/usbmount/usbmount.c
   fi
 
 # Hide Taskbar for 2.0.2 or higher (XFCE based)
-  if [[ ( $INI__gui__hideTaskBar = "1" && $FIRMWARE_VERSION -ge "202" ) ]]
+  if [[ ( $INI__gui__hideTaskBar == "1" && $FIRMWARE_VERSION -ge "202" ) ]]
   then
     echo "Hidding taskbar for 2.0.2"
     if [ -e /root/.script_hide_taskbar ] ;
@@ -566,7 +566,7 @@ MOUNTOPTIONS=\"async,noexec,nodev,noatime,nodiratime\"' /etc/usbmount/usbmount.c
   then
     echo "Firefox is installed"
     # open New Windows In New Tab
-    if [ ${INI__firefox__openNewWindowsInNewTab} = "0" ]
+    if [[ ${INI__firefox__openNewWindowsInNewTab} = "0" ]]
     then
       echo "Disabling Firefox: Open New Window In New Tab"
       awk '/link.open_newwindow/{f=1}END{ if (!f) {print "user_pref(\"browser.link.open_newwindow\", 2);"}}1' /root/.mozilla/firefox/cj9p78ab.default/prefs.js > tmp && mv tmp /root/.mozilla/firefox/cj9p78ab.default/prefs.js
@@ -575,7 +575,7 @@ MOUNTOPTIONS=\"async,noexec,nodev,noatime,nodiratime\"' /etc/usbmount/usbmount.c
     fi
   
     # open New Windows In New Tab
-    if [ ${INI__firefox__alwaysShowTaskbar} = "0" ]
+    if [[ ${INI__firefox__alwaysShowTaskbar} = "0" ]]
     then
       echo "Disabling Firefox: Always Show Taskbar"
       awk '/tabs.autoHide/{f=1}END{ if (!f) {print "user_pref(\"browser.tabs.autoHide\", true);"}}1' /root/.mozilla/firefox/cj9p78ab.default/prefs.js > tmp && mv tmp /root/.mozilla/firefox/cj9p78ab.default/prefs.js
@@ -584,7 +584,7 @@ MOUNTOPTIONS=\"async,noexec,nodev,noatime,nodiratime\"' /etc/usbmount/usbmount.c
     fi
   
     # Disable Resume From Crash feature in Firefox
-    if [ ${INI__firefox__disableResumeFromCrash} = "1" ]
+    if [[ ${INI__firefox__disableResumeFromCrash} == "1" ]]
     then
       echo "Disabling Firefox: Resume From Crash"
       awk '/resume_from_crash/{f=1}END{ if (!f) {print "user_pref(\"browser.sessionstore.resume_from_crash\", false);"}}1' /root/.mozilla/firefox/cj9p78ab.default/prefs.js > tmp && mv tmp /root/.mozilla/firefox/cj9p78ab.default/prefs.js
@@ -593,7 +593,7 @@ MOUNTOPTIONS=\"async,noexec,nodev,noatime,nodiratime\"' /etc/usbmount/usbmount.c
     fi
   
     # Install r-kiosk extension to lock web browser
-    if [ ${INI__firefox__kiosk} = "1" ]
+    if [[ ${INI__firefox__kiosk} == "1" ]]
     then
       if [ -e /usr/share/mozilla/extensions/\{ec8030f7-c20a-464f-9b0e-13a3a9e97384\}/\{4D498D0A-05AD-4fdb-97B5-8A0AABC1FC5B\}/install.rdf ]
       then
@@ -611,7 +611,7 @@ MOUNTOPTIONS=\"async,noexec,nodev,noatime,nodiratime\"' /etc/usbmount/usbmount.c
     fi    
 
     # Updating SSL Certicates to Firefox
-    if [ ${INI__firefox__pushCertificate} ]
+    if [[ ${INI__firefox__pushCertificate} == "1" ]]
     then
       echo "Pushing SSL Certificates to Firefox: ${INI__firefox__pushCertificate}"
       if [ -e /root/.script_firefox_certs_updated ]
@@ -621,6 +621,104 @@ MOUNTOPTIONS=\"async,noexec,nodev,noatime,nodiratime\"' /etc/usbmount/usbmount.c
       	eval "cp -f ${SCRIPTPATH}/certs/cert8.db /root/.mozilla/firefox/cj9p78ab.default/"
       	eval "touch /root/.script_firefox_certs_updated"
       	echo "Certificates has been updated !"
+      fi
+    fi
+
+    # Change language in Firefox - English
+    if [[ ${INI__firefox__language} == "en" ]]
+    then
+      echo "Changing Firefox language: English"
+      if [ -e /root/.script_firefox_language_en ]
+      then
+      	echo "Language is already updated."
+      else
+      	eval "rm -f /root/.script_firefox_language_*"
+        eval "sed -i -e '/intl.locale.MatchOS/d' /root/.mozilla/firefox/cj9p78ab.default/prefs.js"
+        eval "echo 'c\user_pref(\"intl.locale.MatchOS\", false);'>>/root/.mozilla/firefox/cj9p78ab.default/prefs.js"
+        eval "sed -i -e '/accept_languages/d' /root/.mozilla/firefox/cj9p78ab.default/prefs.js"
+        eval "echo 'c\user_pref(\"intl.accept_languages\", \"en-us,en\");'>>/root/.mozilla/firefox/cj9p78ab.default/prefs.js"
+        eval "sed -i -e '/useragent.locale/d' /root/.mozilla/firefox/cj9p78ab.default/prefs.js"
+        eval "echo 'c\user_pref(\"general.useragent.locale\", \"en\");'>>/root/.mozilla/firefox/cj9p78ab.default/prefs.js"
+      	eval "touch /root/.script_firefox_language_en"
+      	echo "Language has been updated !"
+      fi
+    fi
+
+    # Change language in Firefox - French
+    if [[ ${INI__firefox__language} == "fr" ]]
+    then
+      echo "Changing Firefox language: French"
+      if [ -e /root/.script_firefox_language_fr ]
+      then
+      	echo "Language is already updated."
+      else
+      	eval "rm -f /root/.script_firefox_language_*"
+        eval "tar zxvf ${SCRIPTPATH}/data/firefox-fr.tgz -C /root/.mozilla/firefox/cj9p78ab.default/extensions/"
+        eval "sed -i -e '/intl.locale.MatchOS/d' /root/.mozilla/firefox/cj9p78ab.default/prefs.js"
+        eval "echo 'c\user_pref(\"intl.locale.MatchOS\", false);'>>/root/.mozilla/firefox/cj9p78ab.default/prefs.js"
+        eval "sed -i -e '/accept_languages/d' /root/.mozilla/firefox/cj9p78ab.default/prefs.js"
+        eval "echo 'c\user_pref(\"intl.accept_languages\", \"fr,en-us,en\");'>>/root/.mozilla/firefox/cj9p78ab.default/prefs.js"
+        eval "sed -i -e '/useragent.locale/d' /root/.mozilla/firefox/cj9p78ab.default/prefs.js"
+        eval "echo 'c\user_pref(\"general.useragent.locale\", \"fr-FR\");'>>/root/.mozilla/firefox/cj9p78ab.default/prefs.js"
+      	eval "touch /root/.script_firefox_language_fr"
+      	echo "Language has been updated !"
+      fi
+    fi
+
+    # Change language in Firefox - German
+    if [[ ${INI__firefox__language} == "de" ]]
+    then
+      echo "Changing Firefox language: German"
+      if [ -e /root/.script_firefox_language_de ]
+      then
+      	echo "Language is already updated."
+      else
+      	eval "rm -f /root/.script_firefox_language_*"
+        eval "tar zxvf ${SCRIPTPATH}/data/firefox-de.tgz -C /root/.mozilla/firefox/cj9p78ab.default/extensions/"
+        eval "sed -i -e '/intl.locale.MatchOS/d' /root/.mozilla/firefox/cj9p78ab.default/prefs.js"
+        eval "echo 'c\user_pref(\"intl.locale.MatchOS\", false);'>>/root/.mozilla/firefox/cj9p78ab.default/prefs.js"
+        eval "sed -i -e '/accept_languages/d' /root/.mozilla/firefox/cj9p78ab.default/prefs.js"
+        eval "echo 'c\user_pref(\"intl.accept_languages\", \"de,en-us,en\");'>>/root/.mozilla/firefox/cj9p78ab.default/prefs.js"
+        eval "sed -i -e '/useragent.locale/d' /root/.mozilla/firefox/cj9p78ab.default/prefs.js"
+        eval "echo 'c\user_pref(\"general.useragent.locale\", \"de\");'>>/root/.mozilla/firefox/cj9p78ab.default/prefs.js"
+      	eval "touch /root/.script_firefox_language_de"
+      	echo "Language has been updated !"
+      fi
+    fi
+
+    # Change language in Firefox - Spanish
+    if [[ ${INI__firefox__language} == "sp" ]]
+    then
+      echo "Changing Firefox language: Spanish"
+      if [ -e /root/.script_firefox_language_sp ]
+      then
+      	echo "Language is already updated."
+      else
+      	eval "rm -f /root/.script_firefox_language_*"
+        eval "tar zxvf ${SCRIPTPATH}/data/firefox-sp.tgz -C /root/.mozilla/firefox/cj9p78ab.default/extensions/"
+        eval "sed -i -e '/intl.locale.MatchOS/d' /root/.mozilla/firefox/cj9p78ab.default/prefs.js"
+        eval "echo 'c\user_pref(\"intl.locale.MatchOS\", false);'>>/root/.mozilla/firefox/cj9p78ab.default/prefs.js"
+        eval "sed -i -e '/accept_languages/d' /root/.mozilla/firefox/cj9p78ab.default/prefs.js"
+        eval "echo 'c\user_pref(\"intl.accept_languages\", \"es-ES,en-us,en\");'>>/root/.mozilla/firefox/cj9p78ab.default/prefs.js"
+        eval "sed -i -e '/useragent.locale/d' /root/.mozilla/firefox/cj9p78ab.default/prefs.js"
+        eval "echo 'c\user_pref(\"general.useragent.locale\", \"es\");'>>/root/.mozilla/firefox/cj9p78ab.default/prefs.js"
+      	eval "touch /root/.script_firefox_language_sp"
+      	echo "Language has been updated !"
+      fi
+    fi
+
+    # Certificate: Select Automatically if only one certificate
+    if [[ ${INI__firefox__certAutoSelect} == "1" ]]
+    then
+      echo "Firefox: Certificate Auto Select"
+      if [ -e /root/.script_firefox_cert_auto_select ]
+      then
+      	echo "Certificate Auto Select is already updated."
+      else
+        eval "sed -i -e '/security.default_personal_cert/d' /root/.mozilla/firefox/cj9p78ab.default/prefs.js"
+        eval "echo 'c\user_pref(\"security.default_personal_cert\", \"Select Automatically\");'>>/root/.mozilla/firefox/cj9p78ab.default/prefs.js"
+      	eval "touch /root/.script_firefox_cert_auto_select"
+      	echo "Certificate Auto Select has been updated !"
       fi
     fi
 
@@ -645,7 +743,7 @@ MOUNTOPTIONS=\"async,noexec,nodev,noatime,nodiratime\"' /etc/usbmount/usbmount.c
     fi
   
     # Adding USB to Serial support in wfclient.ini
-    if [ ${INI__citrix__addComPortUSB} ];
+    if [ ${INI__citrix__addComPortUSB}  = "1" ]
     then
       echo "Adding Citrix USB to Serial: ${INI__citrix__addComPortUSB}"
       eval "sed -i -e '/ComPort1/d' /root/.ICAClient/wfclient.ini"
@@ -657,9 +755,18 @@ ComPort1=\/dev\/ttyUSB0' /root/.ICAClient/wfclient.ini"
       eval "sed -i -e '/LastComPortNum/c \
 LastComPortNum=2' /root/.ICAClient/wfclient.ini"
     fi
+  
+    # ICA Fix for Num Lock disabled at login screen in wfclient.ini
+    if [[ ${INI__citrix__fixNumLock} == "1" ]]
+    then
+      echo "Fixing Citrix Num Lock issue: ${INI__citrix__fixNumLock}"
+      eval "sed -i -e '/EUKSModeMask/d' /root/.ICAClient/wfclient.ini"
+      eval "sed -i -e '/WFClient/a \
+EUKSModeMask=1' /root/.ICAClient/wfclient.ini"
+    fi
 
     # Updating SSL Certicates to Citrix Client
-    if [ ${INI__citrix__pushCertificate} ]
+    if [[ ${INI__citrix__pushCertificate} == "1" ]]
     then
       echo "Pushing SSL Certificates to Citrix Client: ${INI__citrix__pushCertificate}"
       if [ -e /root/.script_citrix_certs_updated ]
@@ -673,14 +780,14 @@ LastComPortNum=2' /root/.ICAClient/wfclient.ini"
     fi
 
     # Cleaning PNAgent Icons on desktop during boot
-    if [ ${INI__citrix__cleanPNAIcons} ]
+    if [[ "$INI__citrix__cleanPNAIcons" == "1" ]]
     then
       echo "Cleaning PNA Icons on Desktop: ${INI__citrix__cleanPNAIcons}"
       eval "grep -rlI 'pnagent' /root/Desktop | xargs -I{} rm -v {}"
     fi
 
     # Fixing XDMAllowed at every boot
-    if [[ ( $INI__citrix__fixCDMAllowed = "1" ) ]]
+    if [[ $INI__citrix__fixCDMAllowed == "1" ]]
     then
       echo "Fixing CDMAllowed to off: ${INI__citrix__fixCDMAllowed}"
       eval "sed -i -e 's/CDMAllowed=On/CDMAllowed=Off/g' /root/.ICAClient/appsrv.ini"
@@ -695,7 +802,7 @@ LastComPortNum=2' /root/.ICAClient/wfclient.ini"
     fi
 
 # Applying a custom wfclient.ini
-    if [ ${INI__citrix__customWfclientIni} ]
+    if [[ ${INI__citrix__customWfclientIni} == "1" ]]
     then
       echo "Pushing SSL Certificates to Citrix Client: ${INI__citrix__customWfclientIni}"
       if [ -e /root/.script_citrix_custom_wfclient_ini ]
@@ -717,7 +824,7 @@ LastComPortNum=2' /root/.ICAClient/wfclient.ini"
 # ############################################
 
     # Updating SSL Certicates to FreeRDP Client
-    if [ ${INI__freerdp__pushCertificate} ]
+    if [[ ${INI__freerdp__pushCertificate} == "1" ]]
     then
       echo "Pushing SSL Certificates to FreeRDP Client: ${INI__freerdp__pushCertificate}"
       if [ -e /root/.script_freerdp_certs_updated ]
@@ -731,29 +838,12 @@ LastComPortNum=2' /root/.ICAClient/wfclient.ini"
       fi
     fi
 
-    # Updating SSL Certicates to FreeRDP Client
-    if [ ${INI__freerdp__addUsbRedirection} = "1" ]
-    then
-      echo "Enabling USB Driver redirection in FreeRDP (bug fix for 1.00.05) : ${INI__freerdp__addUsbRedirection}"
-      if [ -e /root/.script_freerdp_usbredirection_updated ]
-      then
-      	echo "USB Redirection has been already added."
-      else
-        eval "mv /usr/local/bin/xfreerdp /usr/local/bin/xfreerdp-old"
-      	eval "echo '#!/bin/bash' > /usr/local/bin/xfreerdp"
-      	eval 'echo "/usr/bin/xfreerdp --plugin rdpdr --data disk:usbdrive:/media/rdpusb -- \$*" >> /usr/local/bin/xfreerdp'
-      	eval "chmod +x /usr/local/bin/xfreerdp"
-      	eval "touch /root/.script_freerdp_usbredirection_updated"
-      	echo "USB Redirection has been added !"
-      fi
-    fi
-
 # ############################################
 # RDESKTOP SETTINGS
 # ############################################
 
     # Updating US Internationnal Keyboard to add Euro sign
-    if [ ${INI__rdesktop__usKbFix} ]
+    if [[ ${INI__rdesktop__usKbFix} == "1" ]]
     then
       echo "Update keymap to fix US Int Kb in rdesktop: ${INI__rdesktop__usKbFix}"
       if [ -e /root/.script_rdesktop_uskbfix_updated ]
@@ -771,7 +861,7 @@ LastComPortNum=2' /root/.ICAClient/wfclient.ini"
 # ############################################
 
     # Fixing libz.so.1 lib in iid.conf
-    if [ ${INI__iid__iidZipFix} ]
+    if [[ ${INI__iid__iidZipFix} == "1" ]]
     then
       # Checking if SecMaker iid is installed or not
   	  if [ -e /etc/iid.conf ] ;
@@ -813,24 +903,6 @@ LastComPortNum=2' /root/.ICAClient/wfclient.ini"
       fi
     fi
 
-    # Updating Firefox
-    if [ ${INI__opendevice__updateFirefox} = "1" -a ${DEVICE_MODEL} = "8xxx" ]
-    then
-      echo "Updating Firefox : ${INI__opendevice__updateFirefox}"
-      if [ -e /usr/lib/firefox-3.6.3/firefox ]
-      then
-      	if dpkg-query -W firefox ;
-      	then
-      		echo "Already installed"
-      	else
-	      	eval "dpkg -i --force-all ${SCRIPTPATH}/data/firefox*.deb"
-    	  	echo "Firefox has been installed/updated."
-    	fi
-      else
-      	echo "Chip PC Firefox Plugins isn't installed before... Need to have it installed before !"
-      fi
-    fi
-
     # Updating Chrome
     if [ ${INI__opendevice__updateChrome} = "1" -a ${DEVICE_MODEL} = "8xxx" ]
     then
@@ -849,29 +921,6 @@ LastComPortNum=2' /root/.ICAClient/wfclient.ini"
       	echo "Chip PC Chrome Plugins isn't installed before... Need to have it installed before !"
       fi
     fi
-
-# Adding automatic Keyboard detection tool to ICA Client
-  if [ ${INI__opendevice__IcaAutoKeyboard} = "1" ]
-  then
-    echo "ICA Automatic Keyboard: ${INI__opendevice__IcaAutoKeyboard}"
-    if [ -e /root/.script_ica_auto_keyboard_done ]
-    then
-      echo "Patch already done !"
-    else
-      # Copying files
-      eval "cp ${SCRIPTPATH}/data/xkb-switch/libxkbswitch.so /usr/local/lib/"
-      eval "cp ${SCRIPTPATH}/data/xkb-switch/xkb-switch.bin /usr/local/bin/"
-      eval "mv /usr/local/bin/xkb-switch.bin /usr/local/bin/xkb-switch"
-      eval "cp ${SCRIPTPATH}/data/xkb-switch/ica_keyboard_switch.sh /usr/lib/chippc/scripts/"
-      eval "chmod +x /usr/lib/chippc/scripts/ica_keyboard_switch.sh"
-      eval "chmod +x /usr/local/bin/xkb-switch"
-      # Modifying startsession.sh
-      eval "sed -i -e '/xdotool/a \
-bash /usr/lib/chippc/scripts/ica_keyboard_switch.sh' /usr/lib/chippc/scripts/startsession.sh"
-   	  eval "touch /root/.script_ica_auto_keyboard_done"
-      echo "Patch done."
-    fi
-  fi
 
 else
   echo "Configuration file not found !"
